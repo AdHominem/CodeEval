@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -11,8 +12,15 @@ public class RollerCoaster {
 
         Files.newBufferedReader(Paths.get(args[0])).lines()
                 .map(String::toLowerCase)
-                .map(RollerCoaster::rollerCoasterCase)
+                .map(RollerCoaster::mixedCase)
                 .forEach(System.out::println);
+    }
+
+    public static String mixedCase(String str) {
+        return IntStream.range(0, str.length())
+                .mapToObj(i -> i % 2 == 0 ? Character.toUpperCase(str.charAt(i)) : str.charAt(i))
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
     private static String rollerCoasterCase(String line) {
