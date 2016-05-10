@@ -1,7 +1,12 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -39,6 +44,7 @@ public class SumOfIntegers {
      * @return A List of all subarrays as Lists.
      */
     private static List<List<Integer>> getAllContiguousSubarrays(List<Integer> integerList) {
+
         List<List<Integer>> result = new ArrayList<>();
 
         for (List<Integer> frontTruncatedSubList : getFrontTruncatedSubListsOf(integerList)) {
@@ -48,24 +54,18 @@ public class SumOfIntegers {
         return result;
     }
 
-    private static List<List<Integer>> getFrontTruncatedSubListsOf(List<Integer> list) {
-        List<List<Integer>> result = new ArrayList<>();
-
-        for (int i = 0; i < list.size(); i++) {
-            result.add(list.subList(i, list.size()));
-        }
-
-        return result;
+    private static <T> List<List<T>> getFrontTruncatedSubListsOf(List<T> list) {
+        return getSubListsOf(list, i -> list.subList(i, list.size()));
     }
 
-    private static List<List<Integer>> getEndTruncatedSubListsOf(List<Integer> list) {
-        List<List<Integer>> result = new ArrayList<>();
+    private static <T> List<List<T>> getEndTruncatedSubListsOf(List<T> list) {
+        return getSubListsOf(list, i -> list.subList(0, list.size() - i));
+    }
 
-        for (int i = 0; i < list.size(); i++) {
-            result.add(list.subList(0, list.size() - i));
-        }
-
-        return result;
+    private static <T> List<List<T>> getSubListsOf(List<T> list, IntFunction<List<T>> truncateFunction) {
+        return IntStream.range(0, list.size())
+                        .mapToObj(truncateFunction)
+                        .collect(toList());
     }
 
     private static List<Integer> getSumsOfSubarrays(List<List<Integer>> subarrays) {
