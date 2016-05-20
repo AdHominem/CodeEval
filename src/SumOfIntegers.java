@@ -1,8 +1,8 @@
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.IntFunction;
@@ -19,15 +19,18 @@ import static java.util.stream.Collectors.toList;
  *  the one with the largest sum is found and printed.
  */
 public class SumOfIntegers {
+    private static final int ZERO = 0;
 
     public static void main(String[] args) throws IOException {
 
-        Files.newBufferedReader(Paths.get(args[0])).lines()
-                                                    .map(SumOfIntegers::turnToIntegerList)
-                                                    .map(SumOfIntegers::getAllContiguousSubarrays)
-                                                    .map(SumOfIntegers::getSumsOfSubarrays)
-                                                    .mapToInt(Collections::max)
-                                                    .forEach(System.out::println);
+        try (BufferedReader input = Files.newBufferedReader(Paths.get(args[ZERO]))) {
+            input.lines()
+                    .map(SumOfIntegers::turnToIntegerList)
+                    .map(SumOfIntegers::getAllContiguousSubarrays)
+                    .map(SumOfIntegers::getSumsOfSubarrays)
+                    .mapToInt(Collections::max)
+                    .forEach(System.out::println);
+        }
     }
 
     private static List<Integer> turnToIntegerList(String line) {
@@ -59,21 +62,21 @@ public class SumOfIntegers {
     }
 
     private static <T> List<List<T>> getEndTruncatedSubListsOf(List<T> list) {
-        return getSubListsOf(list, i -> list.subList(0, list.size() - i));
+        return getSubListsOf(list, i -> list.subList(ZERO, list.size() - i));
     }
 
     private static <T> List<List<T>> getSubListsOf(List<T> list, IntFunction<List<T>> truncateFunction) {
-        return IntStream.range(0, list.size())
+        return IntStream.range(ZERO, list.size())
                         .mapToObj(truncateFunction)
                         .collect(toList());
     }
 
     private static List<Integer> getSumsOfSubarrays(List<List<Integer>> subarrays) {
         return subarrays.stream()
-                .map(subsubarray -> subsubarray.stream()
-                                                .mapToInt(integer -> integer)
-                                                .sum())
-                .collect(toList());
+                        .map(subsubarray -> subsubarray.stream()
+                                                       .mapToInt(integer -> integer)
+                                                       .sum())
+                        .collect(toList());
     }
 
 
